@@ -1,4 +1,4 @@
-# aClassroom management app
+# Classroom management app
 
 A new Flutter project.
 
