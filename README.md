@@ -1,4 +1,4 @@
-# attendance
+# Classroom management app
 
 A new Flutter project.
 
