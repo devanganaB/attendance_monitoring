@@ -55,38 +55,40 @@ class _splashScreenState extends State<splashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 60),
-            child: Text(
-              'Attendity',
-              style: TextStyle(fontSize: 40),
-            )
-                .animate()
-                .fadeIn(duration: Duration(milliseconds: 500))
-                .slide()
-                .tint(color: Colors.lightBlue),
-          ),
-          Stack(
-            children: [
-              Center(
-                child: Image.asset(
-                  'assets/classroom.jpg',
-                  fit: BoxFit.contain,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: Text(
+                'Attendity',
+                style: TextStyle(fontSize: 40),
+              )
+                  .animate()
+                  .fadeIn(duration: Duration(milliseconds: 500))
+                  .slide()
+                  .tint(color: Colors.lightBlue),
+            ),
+            Stack(
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/classroom.jpg',
+                    fit: BoxFit.contain,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 100),
-            child: Align(
-                alignment: Alignment.bottomCenter,
-                child: CircularProgressIndicator(
-                  color: Colors.orange,
-                )),
-          )
-        ],
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 100),
+              child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: CircularProgressIndicator(
+                    color: Colors.orange,
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }

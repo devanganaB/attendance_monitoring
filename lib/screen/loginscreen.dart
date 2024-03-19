@@ -1,3 +1,4 @@
+import 'package:attendance_monitoring/colors/pallete.dart';
 import 'package:attendance_monitoring/screen/home.dart';
 import 'package:attendance_monitoring/screen/phoneauth.dart';
 import 'package:attendance_monitoring/screen/register.dart';
@@ -16,9 +17,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool passwordVisible = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
     try {
@@ -59,54 +61,35 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Student ID',
-                    hintText: 'Enter your student ID',
-                  ),
+                      labelText: 'Student ID',
+                      hintText: 'Enter your student ID',
+                      icon: Icon(Icons.email),
+                      iconColor: Pallete.primary),
                 ),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter your password',
-                  ),
+                      labelText: 'Password',
+                      hintText: 'Enter your password',
+                      icon: Icon(Icons.pin),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Pallete.primary,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            passwordVisible = !passwordVisible;
+                          });
+                        },
+                      ),
+                      iconColor: Pallete.primary),
                 ),
                 GestureDetector(
-                  onTap: () async {
-                    String id = _emailController.text.toString();
-                    String pass = _passwordController.text.toString();
-
-                    if (id.isNotEmpty && pass.isNotEmpty) {
-                      try {
-                        DocumentSnapshot snap = await FirebaseFirestore.instance
-                            .collection("users")
-                            .doc(id)
-                            .get();
-
-                        if (snap.exists) {
-                          String password = snap['password'];
-                          if (pass == password) {
-                            setState(() {
-                              LoginInfo.id = id;
-                            });
-                            _login();
-                          } else {
-                            // Incorrect password
-                            print("Incorrect password");
-                          }
-                        } else {
-                          // User with provided ID not found
-                          print("User not found");
-                        }
-                      } catch (e) {
-                        print("Error: $e");
-                        // Handle any errors
-                      }
-                    } else {
-                      // Empty student ID or password
-                      print("Student ID or password is empty");
-                    }
-                  },
+                  onTap: _login,
                   child: Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Container(
