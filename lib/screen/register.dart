@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class Register extends StatefulWidget {
@@ -30,6 +31,33 @@ class _RegisterState extends State<Register> {
   // Dummy photo for biometric verification
   String photoUrl = ''; // Provide the URL or path of the photo here
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _db = FirebaseFirestore.instance;
+
+  String? firstNameError;
+  String? lastNameError;
+  String? classError;
+  String? rollNumberError;
+  String? addressError;
+  String? emailError;
+  String? contactNumberError;
+  String? passwordError;
+
+  Future<void> dataindb(String email) async {
+    final snapshot =
+        await _db.collection("users").where("email", isEqualTo: email).get();
+    if (snapshot.size != 0) {
+      Fluttertoast.showToast(
+          msg: "Email already in use",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Pallete.grey,
+          textColor: Pallete.whiteColor,
+          fontSize: 16.0);
+    } else {
+      _register();
+    }
+  }
 
   // Function to register the user
   Future<void> _register() async {
@@ -48,11 +76,20 @@ class _RegisterState extends State<Register> {
         'roll': _rollNumberController.text,
         // 'division': _divisionController.text,
         'class': _classController.text,
-        'contact': _contactNumberController.text,
+        'contact': '+91${_contactNumberController.text}',
         'address': _addressController.text,
         'role': role,
       });
       print("User registered: ${userCredential.user!.email}");
+      await Fluttertoast.showToast(
+          msg: "Successfully Registered",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Pallete.grey,
+          textColor: Pallete.whiteColor,
+          fontSize: 16.0);
+
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => Home(title: "Classroom")));
     } catch (e) {
@@ -106,54 +143,47 @@ class _RegisterState extends State<Register> {
                 ),
               ),
               SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _firstNameController,
-                  decoration: InputDecoration(
-                    labelText: 'First Name',
-                    hintText: 'Enter first name',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
+              buildTextField(
+                'First name',
+                Icons.person,
+                'Enter your first name',
+                controller: _firstNameController,
+                errorText: firstNameError,
+                validator: (value) {
+                  setState(() {
+                    firstNameError = _validateFirstName(value);
+                  });
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              buildTextField(
+                'Last name',
+                Icons.person,
+                'Enter your last name',
+                controller: _lastNameController,
+                errorText: lastNameError,
+                validator: (value) {
+                  setState(() {
+                    lastNameError = _validateLastName(value);
+                  });
+                  return null;
+                },
               ),
 
-              SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _lastNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Last Name',
-                    hintText: 'Enter last name',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _classController,
-                  decoration: InputDecoration(
-                    labelText: 'Class',
-                    hintText: 'Enter class',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
+              const SizedBox(height: 16),
+              buildTextField(
+                'Class',
+                Icons.class_,
+                'Enter your class',
+                controller: _classController,
+                errorText: classError,
+                validator: (value) {
+                  setState(() {
+                    classError = _validateClass(value);
+                  });
+                  return null;
+                },
               ),
               SizedBox(height: 16),
               // Container(
@@ -172,105 +202,90 @@ class _RegisterState extends State<Register> {
               //   ),
               // ),
               // SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _rollNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Roll Number',
-                    hintText: 'Enter roll number',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
+              const SizedBox(height: 16),
+              buildTextField(
+                'Roll Number',
+                Icons.format_list_numbered,
+                'Enter roll number',
+                controller: _rollNumberController,
+                keyboardType: TextInputType.number,
+                errorText: rollNumberError,
+                validator: (value) {
+                  setState(() {
+                    rollNumberError = _validateRollNumber(value);
+                  });
+                  return null;
+                },
               ),
               SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _addressController,
-                  decoration: InputDecoration(
-                    labelText: 'Address',
-                    hintText: 'Enter address',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
+              buildTextField(
+                'Address',
+                Icons.home,
+                'Enter your address',
+                controller: _addressController,
+                errorText: addressError,
+                validator: (value) {
+                  setState(() {
+                    addressError = _validateAddress(value);
+                  });
+                  return null;
+                },
               ),
-              SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Enter email Id',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
+              const SizedBox(height: 16),
+              buildTextField(
+                'Email',
+                Icons.email,
+                'Enter your email',
+                controller: _emailController,
+                errorText: emailError,
+                validator: (value) {
+                  setState(() {
+                    emailError = _validateEmail(value);
+                  });
+                  return null;
+                },
               ),
 
-              SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _contactNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Contact Number',
-                    hintText: 'Enter contact number',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
+              const SizedBox(height: 16),
+              buildTextField(
+                'Phone Number',
+                Icons.phone,
+                'Enter your number',
+                controller: _contactNumberController,
+                errorText: contactNumberError,
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  setState(() {
+                    contactNumberError = _validateContactNumber(value);
+                  });
+                  return null;
+                },
               ),
               SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextFormField(
-                  controller: _passwordController,
-                  obscureText: !passwordVisible,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter password',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        // Based on password visibility, toggle icon
-                        passwordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          passwordVisible = !passwordVisible;
-                        });
-                      },
-                    ),
-                  ),
-                ),
+              PasswordTextField(
+                label: 'Password',
+                icon: Icons.lock,
+                hint: 'Create your password',
+                controller: _passwordController,
+                validator: (value) {
+                  setState(() {
+                    passwordError = _validatePassword(value);
+                  });
+                  return null;
+                },
+                isPasswordVisible: passwordVisible,
+                onVisibilityChanged: (isVisible) {
+                  setState(() {
+                    passwordVisible = isVisible;
+                  });
+                  return null;
+                },
               ),
 
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  _register();
+                  dataindb(_emailController.text.trim());
                 },
                 child: Text('Register'),
               ),
@@ -278,6 +293,248 @@ class _RegisterState extends State<Register> {
           ),
         ),
       ),
+    );
+  }
+
+  String? _validateFirstName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your first name';
+    }
+    if (!RegExp(r'^[A-Z][a-zA-Z]*$').hasMatch(value)) {
+      return 'Name should only contain alphabets and start Capital letters';
+    }
+    return null;
+  }
+
+  String? _validateLastName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your last name';
+    }
+    if (!RegExp(r'^[A-Z][a-zA-Z]*$').hasMatch(value)) {
+      return 'Name should only contain alphabets and start Capital letters';
+    }
+    return null;
+  }
+
+  String? _validateClass(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your class';
+    }
+    return null;
+  }
+
+  String? _validateRollNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your valid roll number';
+    }
+    if (!RegExp(r'^\d{3}$').hasMatch(value)) {
+      return 'Please enter digits';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^2021\.[a-zA-Z]+\.[a-zA-Z]+@ves\.ac\.in$').hasMatch(value)) {
+      return 'Please enter a valid ves email';
+    }
+    return null;
+  }
+
+  String? _validateAddress(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter address';
+    }
+    if (!RegExp(r"^[a-zA-Z ]+$").hasMatch(value)) {
+      return 'Address should only contain alphabets';
+    }
+    return null;
+  }
+
+  String? _validateContactNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+      return 'Please enter 10 digits';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    if (!RegExp(r'^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
+        .hasMatch(value)) {
+      return 'Must include letters, numbers and special characters';
+    }
+    return null;
+  }
+
+  bool _validateForm() {
+    setState(() {
+      firstNameError = _validateFirstName(_firstNameController.text);
+      lastNameError = _validateLastName(_lastNameController.text);
+      classError = _validateClass(_classController.text);
+      rollNumberError = _validateRollNumber(_rollNumberController.text);
+      addressError = _validateAddress(_addressController.text);
+      emailError = _validateEmail(_emailController.text);
+      contactNumberError =
+          _validateContactNumber(_contactNumberController.text);
+      passwordError = _validatePassword(_passwordController.text);
+    });
+
+    return firstNameError == null &&
+        lastNameError == null &&
+        classError == null &&
+        rollNumberError == null &&
+        addressError == null &&
+        emailError == null &&
+        contactNumberError == null &&
+        passwordError == null;
+  }
+
+  Widget buildTextField(
+    String label,
+    IconData icon,
+    String hint, {
+    bool isPassword = false,
+    TextEditingController? controller,
+    TextInputType? keyboardType,
+    FormFieldValidator<String>? validator,
+    String? errorText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          obscureText: isPassword,
+          keyboardType: keyboardType,
+          validator: validator,
+          onChanged: (value) {
+            // Trigger validation whenever text changes
+            if (validator != null) {
+              // Validate the input
+              String? errorMessage = validator(value);
+              // Update error message dynamically
+              setState(() {
+                controller!.value = controller.value.copyWith(
+                  text: value,
+                  selection: TextSelection.collapsed(offset: value.length),
+                );
+                // Update error message for the field
+                // You can use a Map to store error messages for each field
+                // and then update accordingly
+                // Here, I'm just printing the error message for demonstration
+                print(errorMessage);
+              });
+            }
+          },
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: Pallete.primary),
+            hintText: hint,
+            border: const OutlineInputBorder(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Pallete.grey),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Pallete.primary),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            errorText: errorText,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PasswordTextField extends StatefulWidget {
+  final String label;
+  final IconData icon;
+  final String hint;
+  final TextEditingController controller;
+  final TextInputType? keyboardType;
+  final FormFieldValidator<String>? validator;
+  final bool isPasswordVisible;
+  final Function(bool) onVisibilityChanged;
+  // final String? errorText;
+
+  const PasswordTextField({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.hint,
+    required this.controller,
+    this.keyboardType,
+    this.validator,
+    required this.isPasswordVisible,
+    required this.onVisibilityChanged,
+  });
+  @override
+  _PasswordTextFieldState createState() => _PasswordTextFieldState();
+}
+
+class _PasswordTextFieldState extends State<PasswordTextField> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: widget.controller,
+          obscureText: !widget.isPasswordVisible, // Toggle password visibility
+          keyboardType: widget.keyboardType,
+          validator: widget.validator,
+
+          decoration: InputDecoration(
+            prefixIcon: Icon(widget.icon, color: Pallete.primary),
+            hintText: widget.hint,
+            suffixIcon: IconButton(
+              icon: Icon(
+                widget.isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                color: Pallete.primary,
+              ),
+              onPressed: () {
+                widget.onVisibilityChanged(!widget.isPasswordVisible);
+              },
+            ),
+            border: const OutlineInputBorder(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Pallete.grey),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Pallete.primary),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
