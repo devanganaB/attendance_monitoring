@@ -3,12 +3,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
-  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _auth;
+  AuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static String verifyId = "";
 
   Future<User?> getCurrentUser() async {
-    return _firebaseAuth.currentUser;
+    return _auth.currentUser;
   }
 
   // register
@@ -39,7 +40,7 @@ class AuthService {
     required Function errorStep,
     required Function nextStep,
   }) async {
-    await _firebaseAuth
+    await FirebaseAuth.instance
         .verifyPhoneNumber(
             timeout: Duration(seconds: 30),
             phoneNumber: "+91$phone",
@@ -67,7 +68,7 @@ class AuthService {
         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
 
     try {
-      final user = await _firebaseAuth.signInWithCredential(cred);
+      final user = await FirebaseAuth.instance.signInWithCredential(cred);
       if (user.user != null) {
         return "Success";
       } else {
@@ -83,25 +84,35 @@ class AuthService {
   //logout
   static Future<void> logout() async {
     try {
-      // Update user role to -1
-      final user = _firebaseAuth.currentUser;
+      // Update isActive field to false
+      final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final userId = user.uid;
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
-            .update({'role': -1});
+            .update({'isActive': false});
       }
       // Sign out
-      await _firebaseAuth.signOut();
+      await FirebaseAuth.instance.signOut();
     } catch (e) {
       print('Error logging out: $e');
     }
   }
 
-  //check whether user logged out
+  // Check whether user is logged in
   static Future<bool> isLoggedIn() async {
-    var user = _firebaseAuth.currentUser;
-    return user != null;
+    var user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Check if isActive field is true
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (userData.exists) {
+        return userData['isActive'] ?? false;
+      }
+    }
+    return false;
   }
 }

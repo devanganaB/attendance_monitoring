@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:attendance_monitoring/firebase_options.dart';
 import 'package:attendance_monitoring/screen/home.dart';
 import 'package:attendance_monitoring/screen/loginscreen.dart';
+import 'package:attendance_monitoring/services/auth.dart';
+import 'package:attendance_monitoring/services/firebase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -23,15 +26,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Classroom Management',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
-          useMaterial3: true,
-        ),
-        home: splashScreen()
-        // const LoginScreen(),
-        );
+      debugShowCheckedModeBanner: false,
+      title: 'Classroom Management',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
+        useMaterial3: true,
+      ),
+      home: splashScreen(),
+    );
   }
 }
 
@@ -43,13 +45,52 @@ class splashScreen extends StatefulWidget {
 }
 
 class _splashScreenState extends State<splashScreen> {
+  late Timer _timer;
+  final AuthService authService = AuthService();
+  final FirestoreService firestoreService = FirestoreService();
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 5), () {
+    _timer = Timer(const Duration(seconds: 5), checkUserAuthentication);
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
+
+  void checkUserAuthentication() async {
+    final user = await authService.getCurrentUser();
+    if (user != null) {
+      final userData = await firestoreService.getUserData();
+      if (userData != null) {
+        final isActive = userData['isActive'] ?? false;
+        if (isActive) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Home(title: "Attendity")),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        }
+      } else {
+        // Handle error fetching user data
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+    } else {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
-    });
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
   }
 
   @override

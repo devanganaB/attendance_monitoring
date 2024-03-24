@@ -28,9 +28,18 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text,
         password: _passwordController.text,
       );
+
+      // Update isActive to true in Firestore
+      if (userCredential.user != null) {
+        String userId = userCredential.user!.uid;
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({'isActive': true});
+      }
       print("User logged in: ${userCredential.user!.email}");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => Home(title: 'Classroom')
+          builder: (context) => Home(title: 'Attendity')
               .animate()
               .slideX(delay: Duration(milliseconds: 8))));
       // Navigate to the next screen or perform desired actions upon successful login.
