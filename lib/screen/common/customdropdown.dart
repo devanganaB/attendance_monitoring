@@ -1,3 +1,6 @@
+import 'package:attendance_monitoring/screen/attendance.dart';
+import 'package:attendance_monitoring/screen/attendancescreen.dart';
+import 'package:attendance_monitoring/screen/studentscreen.dart';
 import 'package:flutter/material.dart';
 
 class CustomDropdown extends StatefulWidget {
@@ -32,9 +35,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
         // Section title
         GestureDetector(
           onTap: () {
-            setState(() {
-              isExpanded = !isExpanded;
-            });
+            if (widget.title == "Today's Classes") {
+              setState(() {
+                isExpanded = !isExpanded;
+              });
+            } else {
+              _navigateToScreen(context);
+            }
           },
           child: Container(
             child: Row(
@@ -76,5 +83,35 @@ class _CustomDropdownState extends State<CustomDropdown> {
           ),
       ],
     );
+  }
+
+  // Function to navigate to respective screens based on selected option
+  void _navigateToScreen(BuildContext context) {
+    switch (widget.title) {
+      case 'Class Attendance Report':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => StudentScreen()),
+        );
+        break;
+      case 'Faculty Details':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ClassAttendanceScreen()),
+        );
+        break;
+      case 'Class Details':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ClassAttendanceScreen()),
+        );
+        break;
+      case 'Lost and found':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ClassAttendanceScreen()),
+        );
+        break;
+    }
   }
 }

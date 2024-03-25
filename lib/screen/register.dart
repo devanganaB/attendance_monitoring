@@ -38,7 +38,7 @@ class _RegisterState extends State<Register> {
     'D11AD'
   ]; // Example list of classes
 
-  String? selectedClass;
+  String? selectedClass = 'D12A';
 
   // Dummy photo for biometric verification
   String photoUrl = ''; // Provide the URL or path of the photo here
@@ -80,10 +80,21 @@ class _RegisterState extends State<Register> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user?.uid)
-          .set({
+      // await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(userCredential.user?.uid)
+      //     .set({
+      //   'email': _emailController.text,
+      //   'name': '${_firstNameController.text} ${_lastNameController.text}',
+      //   'roll': _rollNumberController.text,
+      //   'class': selectedClass,
+      //   'contact': '+91${_contactNumberController.text}',
+      //   'address': _addressController.text,
+      //   'role': role,
+      //   'isActive': true,
+      // });
+
+      final userData = {
         'email': _emailController.text,
         'name': '${_firstNameController.text} ${_lastNameController.text}',
         'roll': _rollNumberController.text,
@@ -92,7 +103,29 @@ class _RegisterState extends State<Register> {
         'address': _addressController.text,
         'role': role,
         'isActive': true,
-      });
+      };
+
+      // Register the user and create metadata subcollection for students
+      if (role == 0) {
+        // Create metadata subcollection
+        final metadataRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user?.uid)
+            .collection('metadata');
+        await metadataRef.doc('info').set({
+          'attendance': 0, // Default attendance value
+          'marksPhysics': 0, // Default marks for Physics
+          'marksChem': 0, // Default marks for Chemistry
+          'marksMaths': 0, // Default marks for Mathematics
+        });
+      }
+
+      // Set user data in the 'users' collection
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user?.uid)
+          .set(userData);
+
       print("User registered: ${userCredential.user!.email}");
       await Fluttertoast.showToast(
           msg: "Successfully Registered",
