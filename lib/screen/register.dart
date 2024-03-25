@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -43,6 +44,7 @@ class _RegisterState extends State<Register> {
   String photoUrl = ''; // Provide the URL or path of the photo here
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _db = FirebaseFirestore.instance;
+  bool positive = false;
 
   String? firstNameError;
   String? lastNameError;
@@ -85,7 +87,6 @@ class _RegisterState extends State<Register> {
         'email': _emailController.text,
         'name': '${_firstNameController.text} ${_lastNameController.text}',
         'roll': _rollNumberController.text,
-        // 'division': _divisionController.text,
         'class': selectedClass,
         'contact': '+91${_contactNumberController.text}',
         'address': _addressController.text,
@@ -123,25 +124,40 @@ class _RegisterState extends State<Register> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Center(
-                child: ToggleSwitch(
-                  minWidth: 90.0,
-                  initialLabelIndex: 0,
-                  cornerRadius: 20.0,
-                  activeFgColor: Colors.white,
-                  inactiveBgColor: Colors.grey,
-                  inactiveFgColor: Colors.white,
-                  totalSwitches: 2,
-                  labels: ['Student', 'Faculty'],
-                  activeBgColors: [
-                    [Pallete.bgprimary],
-                    [Colors.pink]
-                  ],
-                  onToggle: (index) {
-                    print('switched to: $index');
-                  },
+                child: AnimatedToggleSwitch<bool>.dual(
+                  current: role == 0 ? true : false,
+                  first: true,
+                  second: false,
+                  spacing: 50.0,
+                  style: const ToggleStyle(
+                    borderColor: Colors.transparent,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: Offset(0, 1.5),
+                      ),
+                    ],
+                  ),
+                  borderWidth: 5.0,
+                  height: 55,
+                  onChanged: (b) => setState(() {
+                    role = b ? 0 : 1;
+                    print('role is switched to $role');
+                  }),
+                  styleBuilder: (b) => ToggleStyle(
+                    indicatorColor: b ? Colors.orange : Colors.green,
+                  ),
+                  iconBuilder: (value) =>
+                      value ? Icon(Icons.book) : Icon(Icons.circle),
+                  textBuilder: (value) => value
+                      ? Center(child: Text('Faculty'))
+                      : Center(child: Text('Student')),
                 ),
               ),
               SizedBox(height: 16),
+
               buildTextField(
                 'First name',
                 Icons.person,
@@ -193,6 +209,7 @@ class _RegisterState extends State<Register> {
                 controller: _classController,
                 classOptions: classOptions,
                 errorText: classError,
+                enabled: role == 0,
                 validator: (value) {
                   setState(() {
                     classError = _validateClass(value);
@@ -208,6 +225,7 @@ class _RegisterState extends State<Register> {
                 controller: _rollNumberController,
                 keyboardType: TextInputType.number,
                 errorText: rollNumberError,
+                enabled: role == 0,
                 validator: (value) {
                   setState(() {
                     rollNumberError = _validateRollNumber(value);
@@ -336,8 +354,13 @@ class _RegisterState extends State<Register> {
     if (value == null || value.isEmpty) {
       return 'Please enter your email';
     }
-    if (!RegExp(r'^20(2[0-9]|3[0-4])\.[a-zA-Z]+\.[a-zA-Z]+@ves\.ac\.in$')
-        .hasMatch(value)) {
+    String regexPattern;
+    if (role == 0) {
+      regexPattern = r'^20(2[0-9]|3[0-4])\.[a-zA-Z]+\.[a-zA-Z]+@ves\.ac\.in$';
+    } else {
+      regexPattern = r'.+[a-zA-Z]+\.[a-zA-Z]+@ves\.ac\.in$';
+    }
+    if (!RegExp(regexPattern).hasMatch(value)) {
       return 'Please enter a valid ves email';
     }
     return null;
@@ -408,6 +431,7 @@ class _RegisterState extends State<Register> {
     TextInputType? keyboardType,
     FormFieldValidator<String>? validator,
     String? errorText,
+    bool enabled = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,18 +453,22 @@ class _RegisterState extends State<Register> {
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedClass = newValue;
-                  });
-                  controller!.text = newValue!;
-                },
+                onChanged: enabled
+                    ? (newValue) {
+                        setState(() {
+                          selectedClass = newValue;
+                        });
+                        controller!.text = newValue!;
+                      }
+                    : null,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(icon, color: Pallete.primary),
+                  prefixIcon: Icon(icon,
+                      color: enabled ? Pallete.primary : Colors.grey[200]!),
                   hintText: hint,
                   border: const OutlineInputBorder(),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Pallete.grey),
+                    borderSide: BorderSide(
+                        color: enabled ? Pallete.grey : Colors.grey[200]!),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -455,6 +483,7 @@ class _RegisterState extends State<Register> {
                 controller: controller,
                 obscureText: isPassword,
                 keyboardType: keyboardType,
+                enabled: enabled,
                 validator: validator,
                 onChanged: (value) {
                   if (validator != null) {
@@ -465,11 +494,13 @@ class _RegisterState extends State<Register> {
                   }
                 },
                 decoration: InputDecoration(
-                  prefixIcon: Icon(icon, color: Pallete.primary),
+                  prefixIcon: Icon(icon,
+                      color: enabled ? Pallete.primary : Colors.grey[200]!),
                   hintText: hint,
                   border: const OutlineInputBorder(),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Pallete.grey),
+                    borderSide: BorderSide(
+                        color: enabled ? Pallete.grey : Colors.grey[200]!),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(

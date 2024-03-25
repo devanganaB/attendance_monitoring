@@ -52,7 +52,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 Spacer(),
                 Icon(isExpanded
                     ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down),
+                    : Icons.keyboard_arrow_right),
               ],
             ),
           ),
@@ -71,9 +71,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
                     });
                   },
                 ),
+              Divider(), // Add a divider after each dropdown
             ],
           ),
-        Divider(), // Add a divider after each dropdown
       ],
     );
   }

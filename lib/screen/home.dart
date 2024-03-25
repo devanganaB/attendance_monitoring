@@ -25,7 +25,6 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Student info section
             Padding(
               padding: EdgeInsets.all(15.0),
               child: Row(
@@ -79,7 +78,7 @@ class _HomeState extends State<Home> {
                 ),
                 CustomDropdown(
                   title: 'Class Attendance Report',
-                  options: [],
+                  options: ['one', 'two'],
                 ),
                 CustomDropdown(
                   title: 'Faculty Details',
