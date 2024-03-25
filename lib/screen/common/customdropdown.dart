@@ -137,7 +137,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
       case 'Class Attendance Report':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FacultyAttendanceScreen()),
+          MaterialPageRoute(builder: (context) => StudentScreen()),
         );
         break;
       case 'Faculty Details':

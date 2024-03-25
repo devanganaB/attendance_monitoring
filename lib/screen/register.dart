@@ -1,4 +1,5 @@
 import 'package:attendance_monitoring/colors/pallete.dart';
+import 'package:attendance_monitoring/screen/fhome.dart';
 import 'package:attendance_monitoring/screen/home.dart';
 import 'package:attendance_monitoring/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -135,6 +136,14 @@ class _RegisterState extends State<Register> {
           backgroundColor: Pallete.grey,
           textColor: Pallete.whiteColor,
           fontSize: 16.0);
+
+      // Check if the user's role is 1 (faculty)
+      if (role == 1) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => FHome()),
+        );
+        return; // Exit the function to prevent further navigation
+      }
 
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => Home(title: "Attendity")));

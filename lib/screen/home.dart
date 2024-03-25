@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 final today = DateTime.now();
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.title});
+  const Home({super.key, required this.title, this.scanResult});
 
   final String title;
+  final String? scanResult;
 
   @override
   State<Home> createState() => _HomeState();

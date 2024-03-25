@@ -7,7 +7,7 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
 
-  Future<void> _updateUserCollection(
+  Future<void> updateUserCollection(
       String uid, Map<String, dynamic> userData) async {
     try {
       // Get the role of the user
@@ -39,7 +39,7 @@ class FirestoreService {
     }
   }
 
-  Future<void> _createOrUpdateMetadataSubcollection(String uid) async {
+  Future<void> createOrUpdateMetadataSubcollection(String uid) async {
     final metadataRef =
         _firestore.collection('users').doc(uid).collection('metadata');
     final metadataDocRef = metadataRef.doc('info');
@@ -77,7 +77,7 @@ class FirestoreService {
       print(userData);
 
       if (userData.exists) {
-        await _updateUserCollection(
+        await updateUserCollection(
             currentUser.uid, userData.data() as Map<String, dynamic>);
 
         return userData.data() as Map<String, dynamic>;

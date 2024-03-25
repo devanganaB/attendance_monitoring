@@ -1,6 +1,10 @@
-import 'package:attendance_monitoring/screen/attendancescreen.dart';
+import 'package:attendance_monitoring/screen/home.dart';
+import 'package:attendance_monitoring/services/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:attendance_monitoring/screen/attendancescreen.dart';
+import 'package:attendance_monitoring/services/mapuse.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({Key? key}) : super(key: key);
@@ -10,6 +14,7 @@ class StudentScreen extends StatefulWidget {
 }
 
 class _StudentScreenState extends State<StudentScreen> {
+  final FirestoreService _firestoreService = FirestoreService();
   Future<void> scanQR() async {
     String result = "";
 
@@ -24,12 +29,39 @@ class _StudentScreenState extends State<StudentScreen> {
       print("ERROR");
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => AttendanceScreen(
-                scanResult: result,
-              )),
-    );
+    // Fetch the faculty's current location
+    LatLng facultyLocation = await getFacultyCurrentLocation();
+
+    // Verify if the student's location matches with the faculty's location
+    LatLng studentLocation = await getStudentCurrentLocation();
+    bool locationMatched = await isStudentWithinRange(studentLocation,
+        facultyLocation, 20); // 52 meters is the maximum allowed distance
+
+    // Navigate to AttendanceScreen if the QR scan is successful and location matches
+    if (result.isNotEmpty && locationMatched) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Home(
+            scanResult: result,
+            title: "Attendity",
+          ),
+        ),
+      );
+
+      // If conditions are met, trigger the function to update metadata subcollection
+      final user = await _firestoreService.getUserData();
+      if (user != null && user['role'] == 0) {
+        final userId = user['uid'];
+        await _firestoreService.createOrUpdateMetadataSubcollection(userId);
+      }
+    } else {
+      // Show snackbar indicating unsuccessful QR scan or location mismatch
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('QR scan unsuccessful or location mismatched.'),
+        ),
+      );
+    }
   }
 
   @override

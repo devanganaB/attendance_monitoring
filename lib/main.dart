@@ -69,7 +69,6 @@ class _splashScreenState extends State<splashScreen> {
       if (userData != null) {
         final isActive = userData['isActive'] ?? false;
         if (isActive) {
-          // Check user role
           final int role = userData['role'];
           if (role == 1) {
             Navigator.pushReplacement(
@@ -79,7 +78,7 @@ class _splashScreenState extends State<splashScreen> {
           } else {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => Home(title: "Attendity")),
+              MaterialPageRoute(builder: (context) => Home(title: 'Attendity')),
             );
           }
         } else {
@@ -89,7 +88,6 @@ class _splashScreenState extends State<splashScreen> {
           );
         }
       } else {
-        // Handle error fetching user data
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),
