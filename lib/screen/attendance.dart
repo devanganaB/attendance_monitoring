@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
-class ClassAttendanceScreen extends StatefulWidget {
-  const ClassAttendanceScreen({super.key});
+class FacultyAttendanceScreen extends StatefulWidget {
+  const FacultyAttendanceScreen({super.key});
 
   @override
-  State<ClassAttendanceScreen> createState() => _ClassAttendanceScreenState();
+  State<FacultyAttendanceScreen> createState() =>
+      _FacultyAttendanceScreenState();
 }
 
-class _ClassAttendanceScreenState extends State<ClassAttendanceScreen> {
+class _FacultyAttendanceScreenState extends State<FacultyAttendanceScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Class Attendance Report'),
+        centerTitle: true,
+      ),
       body: Center(child: Text('new screen')),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:attendance_monitoring/firebase_options.dart';
+import 'package:attendance_monitoring/screen/fhome.dart';
 import 'package:attendance_monitoring/screen/home.dart';
 import 'package:attendance_monitoring/screen/loginscreen.dart';
 import 'package:attendance_monitoring/services/auth.dart';
@@ -68,10 +69,19 @@ class _splashScreenState extends State<splashScreen> {
       if (userData != null) {
         final isActive = userData['isActive'] ?? false;
         if (isActive) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Home(title: "Attendity")),
-          );
+          // Check user role
+          final int role = userData['role'];
+          if (role == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => FHome()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Home(title: "Attendity")),
+            );
+          }
         } else {
           Navigator.pushReplacement(
             context,

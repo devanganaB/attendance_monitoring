@@ -1,4 +1,3 @@
-import 'package:attendance_monitoring/screen/common/calendar.dart';
 import 'package:attendance_monitoring/screen/common/customdropdown.dart';
 import 'package:attendance_monitoring/screen/drawer.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
@@ -6,16 +5,14 @@ import 'package:flutter/material.dart';
 
 final today = DateTime.now();
 
-class Home extends StatefulWidget {
-  const Home({super.key, required this.title});
-
-  final String title;
+class FHome extends StatefulWidget {
+  const FHome({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<FHome> createState() => _FHomeState();
 }
 
-class _HomeState extends State<Home> {
+class _FHomeState extends State<FHome> {
   List<DateTime?> _dialogCalendarPickerValue = [
     today,
     today.add(Duration(days: 4)),
@@ -25,7 +22,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("Addendity"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -92,19 +89,21 @@ class _HomeState extends State<Home> {
                 children: [
                   CustomDropdown(
                     title: "Today's Classes",
-                    options: ['Physics', 'Chemistry', 'Mathematics I', 'Java'],
+                    options: ['D12C', 'D7A', 'D17B', 'D11AD'],
                   ),
                   CustomDropdown(
-                    title: 'Class Attendance Report',
-                    options: ['one'],
+                    title: 'Class Attendance',
+                    options: ['D12C', 'D7A', 'D17B', 'D11AD'],
                   ),
                   CustomDropdown(
                     title: 'Faculty Details',
                     options: ['Faculty 1', 'Faculty 2', 'Faculty 3'],
                   ),
                   CustomDropdown(
-                    title: 'Lost and found',
-                    options: ['Lost', 'Found'],
+                    title: 'Class Details',
+                    options: [
+                      'Class detail 1',
+                    ],
                   ),
                 ],
               ),

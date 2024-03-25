@@ -1,7 +1,9 @@
 import 'package:attendance_monitoring/screen/attendance.dart';
 import 'package:attendance_monitoring/screen/attendancescreen.dart';
+import 'package:attendance_monitoring/screen/qrgen.dart';
 import 'package:attendance_monitoring/screen/studentscreen.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class CustomDropdown extends StatefulWidget {
   final String title;
@@ -20,11 +22,44 @@ class CustomDropdown extends StatefulWidget {
 class _CustomDropdownState extends State<CustomDropdown> {
   bool isExpanded = false;
   late String selectedOption;
+  late List<String> _randomTimes;
 
   @override
   void initState() {
     super.initState();
     selectedOption = widget.options[0];
+    _generateRandomTimes();
+  }
+
+  void _generateRandomTimes() {
+    _randomTimes = [];
+    final Random random = Random();
+    Set<int> generatedHours =
+        Set<int>(); // Track generated hours to ensure uniqueness
+    for (int i = 0; i < widget.options.length; i++) {
+      int hour;
+      int minute = 0; // Start with 0 minutes for simplicity
+
+      // Generate a unique hour
+      do {
+        hour = 9 + random.nextInt(6); // Random hour between 9 and 14 (2 PM)
+      } while (generatedHours.contains(hour));
+
+      // Add the generated hour to the set
+      generatedHours.add(hour);
+
+      // Convert hour to 12-hour format and determine AM/PM
+      String time;
+      if (hour < 12) {
+        time = '$hour:${minute.toString().padLeft(2, '0')} AM';
+      } else if (hour == 12) {
+        time = '$hour:${minute.toString().padLeft(2, '0')} PM';
+      } else {
+        time = '${hour - 12}:${minute.toString().padLeft(2, '0')} PM';
+      }
+
+      _randomTimes.add(time);
+    }
   }
 
   @override
@@ -35,7 +70,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
         // Section title
         GestureDetector(
           onTap: () {
-            if (widget.title == "Today's Classes") {
+            if (widget.title == "Today's Classes" ||
+                widget.title == "Class Attendance") {
               setState(() {
                 isExpanded = !isExpanded;
               });
@@ -67,15 +103,25 @@ class _CustomDropdownState extends State<CustomDropdown> {
         if (isExpanded)
           Column(
             children: [
-              // Dropdown options
-              for (String option in widget.options)
+              // Dropdown options with random times
+              for (int i = 0; i < widget.options.length; i++)
                 ListTile(
-                  title: Text(option),
+                  title: Text('${widget.options[i]} - ${_randomTimes[i]}'),
                   onTap: () {
                     setState(() {
-                      selectedOption = option;
+                      selectedOption = widget.options[i];
                       isExpanded = false;
                     });
+                    if (widget.title == "Class Attendance") {
+                      // Navigate to QR generation screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QRGenerationScreen(
+                              selectedOption: selectedOption),
+                        ),
+                      );
+                    }
                   },
                 ),
               Divider(), // Add a divider after each dropdown
@@ -91,25 +137,25 @@ class _CustomDropdownState extends State<CustomDropdown> {
       case 'Class Attendance Report':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => StudentScreen()),
+          MaterialPageRoute(builder: (context) => FacultyAttendanceScreen()),
         );
         break;
       case 'Faculty Details':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ClassAttendanceScreen()),
+          MaterialPageRoute(builder: (context) => FacultyAttendanceScreen()),
         );
         break;
       case 'Class Details':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ClassAttendanceScreen()),
+          MaterialPageRoute(builder: (context) => FacultyAttendanceScreen()),
         );
         break;
       case 'Lost and found':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ClassAttendanceScreen()),
+          MaterialPageRoute(builder: (context) => FacultyAttendanceScreen()),
         );
         break;
     }

@@ -35,6 +35,10 @@ class _StudentScreenState extends State<StudentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Class Attendance Report'),
+        centerTitle: true,
+      ),
       body: Center(
         child: GestureDetector(
           onTap: () {

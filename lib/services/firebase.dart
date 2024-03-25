@@ -39,6 +39,29 @@ class FirestoreService {
     }
   }
 
+  Future<void> _createOrUpdateMetadataSubcollection(String uid) async {
+    final metadataRef =
+        _firestore.collection('users').doc(uid).collection('metadata');
+    final metadataDocRef = metadataRef.doc('info');
+
+    final existingMetadata = await metadataDocRef.get();
+    if (existingMetadata.exists) {
+      // Update existing metadata document
+      await metadataDocRef.update({
+        'attendance': FieldValue.increment(5), // Increase attendance by 5
+      });
+    } else {
+      // Create new metadata document
+      await metadataRef.doc('info').set({
+        'attendance': 5, // Initial attendance value
+        'marksPhysics': 0,
+        'marksChem': 0,
+        'marksMaths': 0,
+        'marksJava': 0,
+      });
+    }
+  }
+
   //Get any Data from Users Collection
   Future<Map<String, dynamic>?> getUserData() async {
     try {

@@ -1,8 +1,10 @@
 import 'package:attendance_monitoring/colors/pallete.dart';
+import 'package:attendance_monitoring/screen/fhome.dart';
 import 'package:attendance_monitoring/screen/home.dart';
 import 'package:attendance_monitoring/screen/phoneauth.dart';
 import 'package:attendance_monitoring/screen/register.dart';
 import 'package:attendance_monitoring/screen/studentscreen.dart';
+import 'package:attendance_monitoring/services/firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,6 +38,19 @@ class _LoginScreenState extends State<LoginScreen> {
             .collection('users')
             .doc(userId)
             .update({'isActive': true});
+
+        // Check if the user's role is 1 (faculty)
+        Map<String, dynamic>? userData = await FirestoreService().getUserData();
+        if (userData != null) {
+          int role = userData['role'];
+          if (role == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => FHome()),
+            );
+            return; // Exit the function to prevent further navigation
+          }
+        }
       }
       print("User logged in: ${userCredential.user!.email}");
       Navigator.of(context).push(MaterialPageRoute(

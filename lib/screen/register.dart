@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 
 class Register extends StatefulWidget {
@@ -117,6 +116,7 @@ class _RegisterState extends State<Register> {
           'marksPhysics': 0, // Default marks for Physics
           'marksChem': 0, // Default marks for Chemistry
           'marksMaths': 0, // Default marks for Mathematics
+          'marksJava': 0,
         });
       }
 
