@@ -43,6 +43,13 @@ dependencies:
   calendar_date_picker2: ^0.5.5
   camera: 
   permission_handler: 
+  sensors: 
+  flutter_sound: 
+  path_provider: ^2.0.5
+  # audioplayers: ^0.20.1
+  dash_chat_2: ^0.0.20
+  google_gemini: ^0.1.2
+  image_picker: ^1.0.7
 
   # maps
   google_maps_flutter: 

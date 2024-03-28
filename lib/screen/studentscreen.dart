@@ -23,7 +23,7 @@ class _StudentScreenState extends State<StudentScreen> {
         "#0000ff",
         "Cancel",
         false,
-        ScanMode.BARCODE,
+        ScanMode.QR,
       );
     } catch (e) {
       print("ERROR");
@@ -35,7 +35,7 @@ class _StudentScreenState extends State<StudentScreen> {
     // Verify if the student's location matches with the faculty's location
     LatLng studentLocation = await getStudentCurrentLocation();
     bool locationMatched = await isStudentWithinRange(studentLocation,
-        facultyLocation, 20); // 52 meters is the maximum allowed distance
+        facultyLocation, 20); // 20 meters is the maximum allowed distance
 
     // Navigate to AttendanceScreen if the QR scan is successful and location matches
     if (result.isNotEmpty && locationMatched) {

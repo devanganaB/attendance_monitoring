@@ -1,3 +1,4 @@
+import 'package:attendance_monitoring/screen/home.dart';
 import 'package:attendance_monitoring/screen/loginscreen.dart';
 import 'package:attendance_monitoring/screen/register.dart';
 import 'package:attendance_monitoring/screen/studentscreen.dart';
@@ -118,7 +119,9 @@ class _PhoneAuthState extends State<PhoneAuth> {
                                             if (_formKey1.currentState!
                                                 .validate()) {
                                               AuthService.loginWithOTP(
-                                                      otp: _otpController.text)
+                                                      otp: _otpController.text,
+                                                      phone:
+                                                          _phoneController.text)
                                                   .then((value) {
                                                 if (value == "Success") {
                                                   Navigator.pop(context);
@@ -126,7 +129,9 @@ class _PhoneAuthState extends State<PhoneAuth> {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              const StudentScreen()));
+                                                              const Home(
+                                                                  title:
+                                                                      'Attendity')));
                                                 } else {
                                                   Navigator.pop(context);
                                                   ScaffoldMessenger.of(context)

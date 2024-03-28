@@ -1,6 +1,8 @@
+import 'package:attendance_monitoring/screen/chat.dart';
 import 'package:attendance_monitoring/screen/common/calendar.dart';
 import 'package:attendance_monitoring/screen/common/customdropdown.dart';
 import 'package:attendance_monitoring/screen/drawer.dart';
+import 'package:attendance_monitoring/services/auth.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +19,34 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String _userName = '';
+  String _userEmail = '';
+  bool _isRecording = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      // Fetch user data from Firestore using AuthService
+      final user = await AuthService().getCurrentUser();
+      if (user != null) {
+        final userData = await AuthService.getUserData(user.uid);
+        if (userData != null) {
+          setState(() {
+            _userName = userData['name'] ?? '';
+            _userEmail = userData['email'] ?? '';
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
   List<DateTime?> _dialogCalendarPickerValue = [
     today,
     today.add(Duration(days: 4)),
@@ -45,25 +75,28 @@ class _HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.all(15.0),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.grey,
-                      child: Text('S'), // Replace with user's initials
+                      child: Text(_userName.isNotEmpty
+                          ? _userName.substring(0, 1).toUpperCase()
+                          : 'S'),
+                      // Replace with user's initials
                     ),
                     SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Sakshi Choudhary',
+                          _userName,
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 20),
                         ),
-                        Text('sakshichoudhary@email.com'),
+                        Text(_userEmail),
                       ],
                     ),
                   ],
@@ -73,7 +106,7 @@ class _HomeState extends State<Home> {
 
               // Text section
               Text(
-                'Hi, Sakshi.',
+                'Hi, $_userName.',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
 
@@ -112,6 +145,39 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: 0, // Set initial selected index (optional)
+        selectedItemColor: Colors.blue[600], // Customize selected item color
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              // Handle Home button press (usually no action needed)
+              break;
+            case 1:
+              // Navigate to Chat screen
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Chat()));
+              break;
+            case 2:
+              // Handle Profile button press (navigate to profile screen if needed)
+              break;
+          }
+        },
       ),
     );
   }

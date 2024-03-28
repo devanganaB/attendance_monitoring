@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'package:map_autocomplete_field/map_autocomplete_field.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -276,18 +277,11 @@ class _RegisterState extends State<Register> {
                 },
               ),
               SizedBox(height: 16),
-              buildTextField(
+              buildMapAutoCompleteField(
                 'Address',
-                Icons.home,
+                Icons.location_on,
                 'Enter your address',
                 controller: _addressController,
-                errorText: addressError,
-                validator: (value) {
-                  setState(() {
-                    addressError = _validateAddress(value);
-                  });
-                  return null;
-                },
               ),
               const SizedBox(height: 16),
               buildTextField(
@@ -461,6 +455,40 @@ class _RegisterState extends State<Register> {
         emailError == null &&
         contactNumberError == null &&
         passwordError == null;
+  }
+
+  Widget buildMapAutoCompleteField(
+    String label,
+    IconData icon,
+    String hint, {
+    required TextEditingController controller,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        MapAutoCompleteField(
+          googleMapApiKey: "AIzaSyDK1wxZ0LAfxGe-tYkwNpyB_T1jz_v3yoM",
+          controller: controller,
+          itemBuilder: (BuildContext context, suggestion) {
+            return ListTile(
+              title: Text(suggestion.description),
+            );
+          },
+          onSuggestionSelected: (suggestion) {
+            setState(() {
+              controller.text = suggestion.description;
+            });
+          },
+        ),
+      ],
+    );
   }
 
   Widget buildTextField(

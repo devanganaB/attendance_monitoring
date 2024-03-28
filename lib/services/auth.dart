@@ -12,6 +12,33 @@ class AuthService {
     return _auth.currentUser;
   }
 
+  // Fetch user data from Firestore based on UID
+  static Future<Map<String, dynamic>?> getUserData(String userId) async {
+    try {
+      // Query user document from Firestore
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      // Check if user data exists
+      if (userData.exists) {
+        // Extract name and email from user data
+        final userName = userData['name'];
+        final userEmail = userData['email'];
+
+        // Return user data as a map
+        return {'name': userName, 'email': userEmail};
+      } else {
+        // User document not found
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      return null;
+    }
+  }
+
   // register
   Future<void> addUserToFirestore(
       String userId, String username, String email) async {
@@ -63,16 +90,48 @@ class AuthService {
   }
 
 //verify OTP and login
-  static Future loginWithOTP({required String otp}) async {
+  static Future loginWithOTP(
+      {required String otp, required String phone}) async {
     final cred =
         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
 
     try {
-      final user = await FirebaseAuth.instance.signInWithCredential(cred);
-      if (user.user != null) {
-        return "Success";
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(cred);
+      final user = userCredential.user;
+      if (user != null) {
+        // Check if the user's phone number exists in Firestore
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('contact',
+                isEqualTo: phone.substring(3)) // Remove the first +91
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          // User found in Firestore, navigate to home screen
+          return {'user': user};
+        }
+
+        // Fetch user data from Firestore based on UID
+        final userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid) // Query based on UID instead of phone number
+            .get();
+
+        if (userData.exists) {
+          // User found, fetch name and email
+          final userName = userData['name'];
+          final userEmail = userData['email'];
+
+          // Navigate to home screen or do further operations with user data
+          return {'name': userName, 'email': userEmail};
+        } else {
+          // User not found in Firestore
+          return 'User not found';
+        }
       } else {
-        return "error in otp login";
+        // User is null
+        return 'Error logging in';
       }
     } on FirebaseAuthException catch (e) {
       return e.message.toString();
