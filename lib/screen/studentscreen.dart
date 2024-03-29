@@ -53,6 +53,11 @@ class _StudentScreenState extends State<StudentScreen> {
       if (user != null && user['role'] == 0) {
         final userId = user['uid'];
         await _firestoreService.createOrUpdateMetadataSubcollection(userId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Attendance Marked succesfully'),
+          ),
+        );
       }
     } else {
       // Show snackbar indicating unsuccessful QR scan or location mismatch

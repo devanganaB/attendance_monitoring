@@ -89,49 +89,83 @@ class AuthService {
     });
   }
 
-//verify OTP and login
-  static Future loginWithOTP(
-      {required String otp, required String phone}) async {
+//   // send otp
+//   static Future sentOtp({
+//     required String phone,
+//     required Function errorStep,
+//     required Function nextStep,
+//   }) async {
+//     await FirebaseAuth.instance
+//         .verifyPhoneNumber(
+//             timeout: Duration(seconds: 30),
+//             phoneNumber: "+91$phone",
+//             verificationCompleted: (PhoneAuthCredential) async {
+//               return;
+//             },
+//             verificationFailed: (error) {
+//               return;
+//             },
+//             codeSent: (verificationId, forceResendingToken) async {
+//               verifyId = verificationId;
+//               nextStep();
+//             },
+//             codeAutoRetrievalTimeout: (verificationId) async {
+//               return;
+//             })
+//         .onError((error, stackTrace) {
+//       errorStep();
+//     });
+//   }
+
+// //verify OTP and login
+//   static Future loginWithOTP({required String otp}) async {
+//     final cred =
+//         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
+
+//     try {
+//       final userCredential =
+//           await FirebaseAuth.instance.signInWithCredential(cred);
+//       final user = userCredential.user;
+//       if (user != null) {
+//         // Fetch user data from Firestore based on UID
+//         final userData = await FirebaseFirestore.instance
+//             .collection('users')
+//             .doc(user.uid) // Query based on UID instead of phone number
+//             .get();
+
+//         if (userData.exists) {
+//           // User found, fetch name and email
+//           final userName = userData['name'];
+//           final userEmail = userData['email'];
+
+//           // Navigate to home screen or do further operations with user data
+//           return {'name': userName, 'email': userEmail};
+//         } else {
+//           // User not found in Firestore
+//           return 'User not found';
+//         }
+//       } else {
+//         // User is null
+//         return 'Error logging in';
+//       }
+//     } on FirebaseAuthException catch (e) {
+//       return e.message.toString();
+//     } catch (e) {
+//       return e.toString();
+//     }
+//   }
+
+  //verify OTP and login
+  static Future loginWithOTP({required String otp}) async {
     final cred =
         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
 
     try {
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(cred);
-      final user = userCredential.user;
-      if (user != null) {
-        // Check if the user's phone number exists in Firestore
-        final querySnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .where('contact',
-                isEqualTo: phone.substring(3)) // Remove the first +91
-            .get();
-
-        if (querySnapshot.docs.isNotEmpty) {
-          // User found in Firestore, navigate to home screen
-          return {'user': user};
-        }
-
-        // Fetch user data from Firestore based on UID
-        final userData = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid) // Query based on UID instead of phone number
-            .get();
-
-        if (userData.exists) {
-          // User found, fetch name and email
-          final userName = userData['name'];
-          final userEmail = userData['email'];
-
-          // Navigate to home screen or do further operations with user data
-          return {'name': userName, 'email': userEmail};
-        } else {
-          // User not found in Firestore
-          return 'User not found';
-        }
+      final user = await FirebaseAuth.instance.signInWithCredential(cred);
+      if (user.user != null) {
+        return "Success";
       } else {
-        // User is null
-        return 'Error logging in';
+        return 'error in otp login';
       }
     } on FirebaseAuthException catch (e) {
       return e.message.toString();

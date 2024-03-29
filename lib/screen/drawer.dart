@@ -68,47 +68,115 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                 ),
               ]),
-            ]),
-          ),
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Logout'),
-            onTap: () async {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(
-                      "Logout",
-                    ),
-                    content: Text('Are you sure you want to logout?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          // Close the dialog
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('No'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          AuthService.logout();
+              ListTile(
+                leading: Icon(Icons.calendar_today),
+                title: Text('Calendar'),
+                onTap: () {
+                  // Navigate to Calendar screen
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.people),
+                title: Text('Classmates'),
+                onTap: () {
+                  // Navigate to Classmates screen
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.message),
+                title: Text('Messages'),
+                onTap: () {
+                  // Navigate to Messages screen
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
+                onTap: () {
+                  // Navigate to Settings screen
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('Logout'),
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          "Logout",
+                        ),
+                        content: Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              // Close the dialog
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              AuthService.logout();
 
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginScreen()));
-                          // SystemNavigator.pop();
-                          // SystemNavigator.pop();
-                        },
-                        child: Text('Yes'),
-                      ),
-                    ],
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()));
+                              // SystemNavigator.pop();
+                              // SystemNavigator.pop();
+                            },
+                            child: Text('Yes'),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
-              );
-            },
+              ),
+            ]),
           ),
+          // ListTile(
+          //   leading: Icon(Icons.logout),
+          //   title: Text('Logout'),
+          //   onTap: () async {
+          //     showDialog(
+          //       context: context,
+          //       builder: (BuildContext context) {
+          //         return AlertDialog(
+          //           title: Text(
+          //             "Logout",
+          //           ),
+          //           content: Text('Are you sure you want to logout?'),
+          //           actions: [
+          //             TextButton(
+          //               onPressed: () {
+          //                 // Close the dialog
+          //                 Navigator.of(context).pop();
+          //               },
+          //               child: Text('No'),
+          //             ),
+          //             TextButton(
+          //               onPressed: () async {
+          //                 AuthService.logout();
+
+          //                 Navigator.pushReplacement(
+          //                     context,
+          //                     MaterialPageRoute(
+          //                         builder: (context) => LoginScreen()));
+          //                 // SystemNavigator.pop();
+          //                 // SystemNavigator.pop();
+          //               },
+          //               child: Text('Yes'),
+          //             ),
+          //           ],
+          //         );
+          //       },
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

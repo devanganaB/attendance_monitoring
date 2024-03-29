@@ -78,6 +78,9 @@ class _PhoneAuthState extends State<PhoneAuth> {
                             ),
                           ),
                       nextStep: () {
+                        // Store phone number in Firestore with '+91' prefix
+                        AuthService()
+                            .addUserToFirestore(_phoneController.text, '', '');
                         showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -119,10 +122,8 @@ class _PhoneAuthState extends State<PhoneAuth> {
                                             if (_formKey1.currentState!
                                                 .validate()) {
                                               AuthService.loginWithOTP(
-                                                      otp: _otpController.text,
-                                                      phone:
-                                                          _phoneController.text)
-                                                  .then((value) {
+                                                otp: _otpController.text,
+                                              ).then((value) {
                                                 if (value == "Success") {
                                                   Navigator.pop(context);
                                                   Navigator.push(

@@ -1,3 +1,4 @@
+import 'package:attendance_monitoring/screen/chat.dart';
 import 'package:attendance_monitoring/screen/common/customdropdown.dart';
 import 'package:attendance_monitoring/screen/drawer.dart';
 import 'package:attendance_monitoring/services/auth.dart';
@@ -140,6 +141,39 @@ class _FHomeState extends State<FHome> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: 0, // Set initial selected index (optional)
+        selectedItemColor: Colors.blue[600], // Customize selected item color
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              // Handle Home button press (usually no action needed)
+              break;
+            case 1:
+              // Navigate to Chat screen
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Chat()));
+              break;
+            case 2:
+              // Handle Profile button press (navigate to profile screen if needed)
+              break;
+          }
+        },
       ),
     );
   }

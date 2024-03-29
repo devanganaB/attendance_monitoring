@@ -37,8 +37,8 @@ class _HomeState extends State<Home> {
         final userData = await AuthService.getUserData(user.uid);
         if (userData != null) {
           setState(() {
-            _userName = userData['name'] ?? '';
-            _userEmail = userData['email'] ?? '';
+            _userName = userData['name'] ?? 'Devangana Barua';
+            _userEmail = userData['email'] ?? '2021.devangana.barua@ves.ac.in';
           });
         }
       }
