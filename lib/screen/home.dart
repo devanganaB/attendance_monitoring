@@ -1,3 +1,4 @@
+import 'package:attendance_monitoring/screen/camera.dart';
 import 'package:attendance_monitoring/screen/chat.dart';
 import 'package:attendance_monitoring/screen/common/calendar.dart';
 import 'package:attendance_monitoring/screen/common/customdropdown.dart';
@@ -55,133 +56,145 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.calendar_today),
-            onPressed: () {
-              _openCalendarDialog();
-            },
-          ),
-        ],
-      ),
-      drawer: CustomDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
+        appBar: AppBar(
+          title: Text(widget.title),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.calendar_today),
+              onPressed: () {
+                _openCalendarDialog();
+              },
+            ),
+          ],
+        ),
+        drawer: CustomDrawer(),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        child: Text(_userName.isNotEmpty
+                            ? _userName.substring(0, 1).toUpperCase()
+                            : 'S'),
+                        // Replace with user's initials
+                      ),
+                      SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _userName,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 20),
+                          ),
+                          Text(_userEmail),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+
+                // Text section
+                Text(
+                  'Hi, $_userName.',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+
+                Text(
+                  'Welcome to your Class',
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[300]),
+                ),
+
+                // Buttons and functionalities section
+                SizedBox(height: 16),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      child: Text(_userName.isNotEmpty
-                          ? _userName.substring(0, 1).toUpperCase()
-                          : 'S'),
-                      // Replace with user's initials
-                    ),
-                    SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _userName,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 20),
-                        ),
-                        Text(_userEmail),
+                    CustomDropdown(
+                      title: "Today's Classes",
+                      options: [
+                        'Physics',
+                        'Chemistry',
+                        'Mathematics I',
+                        'Java'
                       ],
+                    ),
+                    CustomDropdown(
+                      title: 'Class Attendance Report',
+                      options: ['one'],
+                    ),
+                    CustomDropdown(
+                      title: 'Faculty Details',
+                      options: ['Faculty 1', 'Faculty 2', 'Faculty 3'],
+                    ),
+                    CustomDropdown(
+                      title: 'Lost and found',
+                      options: ['Lost', 'Found'],
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 20),
-
-              // Text section
-              Text(
-                'Hi, $_userName.',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-
-              Text(
-                'Welcome to your Class',
-                style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[300]),
-              ),
-
-              // Buttons and functionalities section
-              SizedBox(height: 16),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomDropdown(
-                    title: "Today's Classes",
-                    options: ['Physics', 'Chemistry', 'Mathematics I', 'Java'],
-                  ),
-                  CustomDropdown(
-                    title: 'Class Attendance Report',
-                    options: ['one'],
-                  ),
-                  CustomDropdown(
-                    title: 'Faculty Details',
-                    options: ['Faculty 1', 'Faculty 2', 'Faculty 3'],
-                  ),
-                  CustomDropdown(
-                    title: 'Lost and found',
-                    options: ['Lost', 'Found'],
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: 0, // Set initial selected index (optional)
-        selectedItemColor: Colors.blue[600], // Customize selected item color
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              // Handle Home button press (usually no action needed)
-              break;
-            case 1:
-              // Navigate to Chat screen
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Chat()));
-              break;
-            case 2:
-              // Handle Profile button press (navigate to profile screen if needed)
-              break;
-          }
-        },
-      ),
-    );
+        // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        // floatingActionButton: FloatingActionButton(onPressed: () {
+        //   Navigator.push(
+        //       context, MaterialPageRoute(builder: (context) => CameraScreen()));
+        // }),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat),
+              label: 'Chat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.camera),
+              label: 'Camera',
+            ),
+          ],
+          currentIndex: 0, // Set initial selected index
+          selectedItemColor: Colors.blue[600], // Customize selected item color
+          onTap: (int index) {
+            switch (index) {
+              case 0:
+                // Handle Home button press (if needed)
+                break;
+              case 1:
+                // Navigate to Chat screen
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Chat()));
+                break;
+              case 2:
+                // Navigate to Camera screen
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CameraScreen()));
+                break;
+            }
+          },
+        ));
   }
 
+// userEmail: _userEmail
   // Function to open the calendar dialog
   void _openCalendarDialog() async {
     final values = await showCalendarDatePicker2Dialog(

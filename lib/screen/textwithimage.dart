@@ -45,6 +45,7 @@ class _TextwithImageState extends State<TextwithImage> {
     if (await Permission.camera.request().isGranted) {
       try {
         cameras = await availableCameras();
+        print(cameras);
 
         if (cameras.isNotEmpty) {
           _cameraController = CameraController(cameras[0], ResolutionPreset.max,
