@@ -6,6 +6,7 @@ import 'package:attendance_monitoring/screen/drawer.dart';
 import 'package:attendance_monitoring/services/auth.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
+import 'package:shake/shake.dart';
 
 final today = DateTime.now();
 
@@ -27,6 +28,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    ShakeDetector.autoStart(
+        onPhoneShake: () => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Chat())));
     _fetchUserData();
   }
 
@@ -186,8 +190,11 @@ class _HomeState extends State<Home> {
                 break;
               case 2:
                 // Navigate to Camera screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CameraScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CameraScreen(userEmail: _userEmail)));
                 break;
             }
           },

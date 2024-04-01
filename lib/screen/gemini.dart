@@ -105,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
         messages.insert(0, data);
         setState(() {});
       } else {
-        print("ERROR IS: ${response.body}");
+        print("ERROR IS 404: ${response.body}");
         // Show a dialog with an error message
         showDialog(
           context: context,

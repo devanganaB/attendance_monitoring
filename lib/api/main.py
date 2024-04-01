@@ -7,7 +7,7 @@ genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
 response = chat.send_message([
-    "mesage"
+    "hello, how are you?"
     # imgage,
 ], stream=False)
 

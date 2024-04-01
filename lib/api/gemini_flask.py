@@ -6,19 +6,10 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket
 
-
 load_dotenv()
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
-# response = chat.send_message([
-#     "tell me about moon?"
-#     # imgage,
-# ], stream=False)
-
-# print(response.text)
-
-
 
 app=FastAPI()
 

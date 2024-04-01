@@ -58,6 +58,13 @@ class _StudentScreenState extends State<StudentScreen> {
             content: Text('Attendance Marked succesfully'),
           ),
         );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Home(
+                    title: 'Attendity',
+                  )),
+        );
       }
     } else {
       // Show snackbar indicating unsuccessful QR scan or location mismatch

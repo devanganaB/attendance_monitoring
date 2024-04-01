@@ -49,7 +49,13 @@ dependencies:
   # audioplayers: ^0.20.1
   dash_chat_2: ^0.0.20
   google_gemini: ^0.1.2
-  image_picker: ^1.0.7
+  image_picker: 
+
+  #firebase storage 
+  firebase_storage: 
+
+  #shaky
+  shake: 
 
   # maps
   google_maps_flutter: 
